@@ -1,28 +1,33 @@
 package com.springbootproject.couse.Entities;
 
-import com.springbootproject.couse.Entities.PK.OrderItemPK;
-import jakarta.persistence.*;
-
 import java.io.Serializable;
-import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.springbootproject.couse.Entities.PK.OrderItemPK;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_order_item")
 public class OrderItem implements Serializable {
     @EmbeddedId
     private OrderItemPK id = new OrderItemPK();
-    private Double quantity;
+
+    private Integer quantity;
     private Double price;
 
-    public OrderItem(){}
+    public OrderItem() {
+    }
 
-    public OrderItem(Order order, Product product, Double quantity, Double price) {
-        id.setOrder(order);
-        id.setProduct(product);
+    public OrderItem(Order order, Product product, Integer quantity, Double price) {
+        id = new OrderItemPK(order, product);
         this.quantity = quantity;
         this.price = price;
     }
 
+    @JsonIgnore
     public Order getOrder() {
         return id.getOrder();
     }
@@ -39,11 +44,11 @@ public class OrderItem implements Serializable {
         id.setProduct(product);
     }
 
-    public Double getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -53,6 +58,10 @@ public class OrderItem implements Serializable {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getSubTotal() {
+        return price * quantity;
     }
 
     @Override
@@ -73,9 +82,9 @@ public class OrderItem implements Serializable {
             return false;
         OrderItem other = (OrderItem) obj;
         if (id == null) {
-            if (other.id != null)
-                return false;
-        } else return id.equals(other.id);
+            return other.id == null;
+        } else if (!id.equals(other.id))
+            return false;
         return true;
     }
 }

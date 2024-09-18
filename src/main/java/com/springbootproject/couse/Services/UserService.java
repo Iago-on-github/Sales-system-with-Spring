@@ -22,4 +22,8 @@ public class UserService {
 
         return obj.get(); //a operação "get()" retorna o objeto do tipo que estiver dentro de obj.
     }
+
+    public User insert(User user) {
+        return repository.save(user);
+    }
 }
