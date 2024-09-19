@@ -47,8 +47,8 @@ public class UserResources {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        userService.delete(id);
+        userService.delete(id); // Se o ID não existir, a exceção será lançada e tratada pelo ExceptionHandler
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // Apenas será executado se a exclusão for bem-sucedida
     }
 }
