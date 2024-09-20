@@ -1,4 +1,5 @@
-FROM ubuntu:latest
+# Etapa de build
+FROM ubuntu:latest AS build
 LABEL authors="55759"
 
 # Instalações de dependências em uma única camada
@@ -15,13 +16,13 @@ COPY . .
 # Compila o projeto usando Maven
 RUN mvn clean install
 
-# Define o comando a ser executado quando o contêiner for iniciado
-ENTRYPOINT ["top", "-b"]
-
+# Etapa de execução
 FROM openjdk:17-jdk-slim
 
 EXPOSE 8080
 
-COPY --from=build /target/couse-0.0.1-SNAPSHOT.jar app.jar
+# Copia o jar gerado do estágio de build
+COPY --from=build /app/target/couse-0.0.1-SNAPSHOT.jar app.jar
 
+# Define o comando a ser executado quando o contêiner for iniciado
 ENTRYPOINT ["java", "-jar", "app.jar"]
